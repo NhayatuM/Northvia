@@ -1,0 +1,74 @@
+{
+    "name": "northvia/ecommerce-platform",
+    "description": "NorthVia - Multi-vendor E-commerce Platform",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "psr/log": "^3.0",
+        "psr/cache": "^3.0",
+        "psr/container": "^2.0",
+        "psr/http-message": "^1.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "nikic/fast-route": "^1.3",
+        "firebase/php-jwt": "^6.0",
+        "ramsey/uuid": "^4.7",
+        "vlucas/phpdotenv": "^5.5",
+        "monolog/monolog": "^3.4",
+        "doctrine/dbal": "^3.6",
+        "symfony/console": "^6.3",
+        "symfony/validator": "^6.3",
+        "symfony/serializer": "^6.3",
+        "symfony/property-access": "^6.3",
+        "guzzlehttp/guzzle": "^7.8",
+        "league/fractal": "^0.20",
+        "intervention/image": "^2.7",
+        "phpmailer/phpmailer": "^6.8",
+        "predis/predis": "^2.2",
+        "league/flysystem": "^3.15",
+        "league/csv": "^9.10",
+        "nesbot/carbon": "^2.69"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.3",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpstan/phpstan": "^1.10",
+        "rector/rector": "^0.18",
+        "fakerphp/faker": "^1.23"
+    },
+    "autoload": {
+        "psr-4": {
+            "Northvia\\": "src/",
+            "Northvia\\Tests\\": "tests/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Northvia\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "analyze": "phpstan analyze",
+        "rector": "rector process --dry-run",
+        "rector-fix": "rector process",
+        "quality": [
+            "@cs-check",
+            "@analyze",
+            "@test"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

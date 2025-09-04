@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NorthVia</title>
+    <meta name="description" content="Manage your NorthVia account, view orders, track shipments, and update your profile.">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <style>
+        .dashboard {
+            padding: 2rem 0;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .dashboard-sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .user-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .user-info h3 {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .dashboard-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #666;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-nav a:hover,
+        .dashboard-nav a.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .dashboard-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .stat-card.success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+        
+        .stat-card.warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+        }
+        
+        .stat-card.info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            opacity: 0.9;
+        }
+        
+        .recent-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .order-card {
+            border: 1px solid #eee;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.3s;
+        }
+        
+        .order-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-id {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-shipped { background: #cce8f4; color: #055160; }
+        .status-delivered { background: #d1ecf1; color: #0c5460; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        
+        .order-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-card:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .action-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .dashboard-sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="logo">NorthVia</a>
+                
+                <ul class="nav-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products.html">Products</a></li>
+                    <li><a href="/vendors.html">Vendors</a></li>
+                    <li><a href="/categories.html">Categories</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="/cart.html" class="btn btn-outline">
+                        Cart <span id="cartCount" class="cart-badge" style="display: none;">0</span>
+                    </a>
+                    <div class="user-menu">
+                        <span>Hi, <span id="userName">User</span></span>
+                        <a href="/dashboard.html" class="btn btn-primary">Dashboard</a>
+                        <button onclick="logout()" class="btn btn-outline">Logout</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <main class="dashboard">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h3 id="userFullName">Loading...</h3>
+                    <p id="userEmail">Loading...</p>
+                    <p id="memberSince">Member since: Loading...</p>
+                </div>
+                
+                <nav>
+                    <ul class="dashboard-nav">
+                        <li><a href="#" onclick="showPage('overview')" class="active" data-page="overview">
+                            📊 Overview
+                        </a></li>
+                        <li><a href="#" onclick="showPage('orders')" data-page="orders">
+                            🛍️ My Orders
+                        </a></li>
+                        <li><a href="#" onclick="showPage('wishlist')" data-page="wishlist">
+                            ❤️ Wishlist
+                        </a></li>
+                        <li><a href="#" onclick="showPage('addresses')" data-page="addresses">
+                            📍 Addresses
+                        </a></li>
+                        <li><a href="#" onclick="showPage('profile')" data-page="profile">
+                            👤 Profile Settings
+                        </a></li>
+                        <li><a href="#" onclick="showPage('notifications')" data-page="notifications">
+                            🔔 Notifications
+                        </a></li>
+                        <li><a href="#" onclick="showPage('support')" data-page="support">
+                            💬 Support
+                        </a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="dashboard-content">
+                <!-- Overview Page -->
+                <div id="overviewPage" class="dashboard-page">
+                    <div class="page-header">
+                        <h1>Dashboard Overview</h1>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalOrders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-number" id="completedOrders">0</div>
+                            <div class="stat-label">Completed Orders</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-number" id="pendingOrders">0</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-number" id="wishlistCount">0</div>
+                            <div class="stat-label">Wishlist Items</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="recent-section">
+                        <div class="section-header">
+                            <h2>Recent Orders</h2>
+                            <a href="#" onclick="showPage('orders')" class="btn btn-outline">View All</a>
+                        </div>
+                        <div id="recentOrders">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <h3>No orders yet</h3>
+                                <p>Start shopping to see your orders here</p>
+                                <a href="/products.html" class="btn btn-primary">Start Shopping</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <a href="/products.html" class="action-card">
+                            <div class="action-icon">🛍️</div>
+                            <div class="action-title">Shop Products</div>
+                            <div class="action-desc">Browse thousands of products</div>
+                        </a>
+                        
+                        <a href="#" onclick="showPage('orders')" class="action-card">
+                            <div class="action-icon">📦</div>
+                            <div class="action-title">Track Orders</div>
+                            <div class="action-desc">Check your order status</div>
+                        </a>
+                        
+                        <a href="#" onclick="showPage('wishlist')" class="action-card">
+                            <div class="action-icon">❤️</div>
+                            <div class="action-title">My Wishlist</div>
+                            <div class="action-desc">View saved items</div>
+                        </a>
+                        
+                        <a href="#" onclick="showPage('support')" class="action-card">
+                            <div class="action-icon">💬</div>
+                            <div class="action-title">Get Support</div>
+                            <div class="action-desc">Contact customer service</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Other Pages (initially hidden) -->
+                <div id="ordersPage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>My Orders</h1>
+                    </div>
+                    <div id="ordersContent">Loading orders...</div>
+                </div>
+
+                <div id="wishlistPage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>My Wishlist</h1>
+                    </div>
+                    <div id="wishlistContent">Loading wishlist...</div>
+                </div>
+
+                <div id="addressesPage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>My Addresses</h1>
+                        <button onclick="showAddressForm()" class="btn btn-primary">Add New Address</button>
+                    </div>
+                    <div id="addressesContent">Loading addresses...</div>
+                </div>
+
+                <div id="profilePage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>Profile Settings</h1>
+                    </div>
+                    <div id="profileContent">Loading profile...</div>
+                </div>
+
+                <div id="notificationsPage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>Notifications</h1>
+                        <button onclick="markAllNotificationsRead()" class="btn btn-outline">Mark All Read</button>
+                    </div>
+                    <div id="notificationsContent">Loading notifications...</div>
+                </div>
+
+                <div id="supportPage" class="dashboard-page" style="display: none;">
+                    <div class="page-header">
+                        <h1>Support Center</h1>
+                    </div>
+                    <div id="supportContent">
+                        <div class="support-options">
+                            <div class="action-card" onclick="createSupportTicket()">
+                                <div class="action-icon">🎫</div>
+                                <div class="action-title">Create Support Ticket</div>
+                                <div class="action-desc">Get help with your order or account</div>
+                            </div>
+                            
+                            <a href="/faq.html" class="action-card">
+                                <div class="action-icon">❓</div>
+                                <div class="action-title">FAQ</div>
+                                <div class="action-desc">Find answers to common questions</div>
+                            </a>
+                            
+                            <a href="/contact.html" class="action-card">
+                                <div class="action-icon">📞</div>
+                                <div class="action-title">Contact Us</div>
+                                <div class="action-desc">Reach out to our support team</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/assets/js/main.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is logged in
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+
+            await loadUserData();
+            await loadDashboardData();
+        });
+
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.data;
+                    updateUserInfo();
+                } else {
+                    // Token might be invalid
+                    localStorage.removeItem('auth_token');
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                window.northvia?.showMessage('Error loading user data', 'error');
+            }
+        }
+
+        function updateUserInfo() {
+            if (!currentUser) return;
+
+            document.getElementById('userName').textContent = currentUser.first_name;
+            document.getElementById('userFullName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.first_name.charAt(0).toUpperCase();
+            
+            if (currentUser.created_at) {
+                const memberSince = new Date(currentUser.created_at).toLocaleDateString('en-NG', {
+                    year: 'numeric',
+                    month: 'long'
+                });
+                document.getElementById('memberSince').textContent = `Member since: ${memberSince}`;
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load stats
+                const token = localStorage.getItem('auth_token');
+                const headers = { 'Authorization': `Bearer ${token}` };
+
+                // Load orders count
+                const ordersResponse = await fetch('/api/orders', { headers });
+                if (ordersResponse.ok) {
+                    const ordersData = await ordersResponse.json();
+                    if (ordersData.success) {
+                        const orders = ordersData.data;
+                        document.getElementById('totalOrders').textContent = orders.length;
+                        document.getElementById('completedOrders').textContent = orders.filter(o => o.status === 'delivered').length;
+                        document.getElementById('pendingOrders').textContent = orders.filter(o => ['pending', 'confirmed', 'shipped'].includes(o.status)).length;
+                        
+                        // Show recent orders
+                        displayRecentOrders(orders.slice(0, 3));
+                    }
+                }
+
+                // Load wishlist count
+                const wishlistResponse = await fetch('/api/wishlist', { headers });
+                if (wishlistResponse.ok) {
+                    const wishlistData = await wishlistResponse.json();
+                    if (wishlistData.success) {
+                        document.getElementById('wishlistCount').textContent = wishlistData.data.items?.length || 0;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function displayRecentOrders(orders) {
+            const container = document.getElementById('recentOrders');
+            
+            if (!orders || orders.length === 0) {
+                return; // Keep the empty state
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-id">Order #${order.order_number}</span>
+                            <span class="order-status status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold; color: #007bff;">${formatPrice(order.total_amount)}</div>
+                            <div style="font-size: 0.85rem; color: #666;">
+                                ${new Date(order.created_at).toLocaleDateString()}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        ${order.items_count} items • Delivery: ${order.delivery_address?.city || 'Not specified'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.dashboard-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.dashboard-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageName + 'Page').style.display = 'block';
+            
+            // Add active class to selected nav item
+            document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+            
+            // Load page-specific content
+            switch(pageName) {
+                case 'orders':
+                    loadOrders();
+                    break;
+                case 'wishlist':
+                    loadWishlist();
+                    break;
+                case 'addresses':
+                    loadAddresses();
+                    break;
+                case 'profile':
+                    loadProfile();
+                    break;
+                case 'notifications':
+                    loadNotifications();
+                    break;
+            }
+        }
+
+        async function loadOrders() {
+            const container = document.getElementById('ordersContent');
+            container.innerHTML = 'Loading orders...';
+
+            try {
+                const response = await fetch('/api/orders', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.data.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <h3>No orders yet</h3>
+                                <p>Start shopping to see your orders here</p>
+                                <a href="/products.html" class="btn btn-primary">Start Shopping</a>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = data.data.map(order => `
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <div>
+                                        <span class="order-id">Order #${order.order_number}</span>
+                                        <span class="order-status status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold; color: #007bff;">${formatPrice(order.total_amount)}</div>
+                                        <div style="font-size: 0.85rem; color: #666;">
+                                            ${new Date(order.created_at).toLocaleDateString()}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="order-details">
+                                    ${order.items_count} items • Delivery: ${order.delivery_address?.city || 'Not specified'}
+                                    <br>
+                                    <div style="margin-top: 0.5rem;">
+                                        <button class="btn btn-outline" style="font-size: 0.85rem;" onclick="viewOrder('${order.id}')">View Details</button>
+                                        ${order.status === 'pending' ? `<button class="btn btn-outline" style="font-size: 0.85rem; margin-left: 0.5rem;" onclick="cancelOrder('${order.id}')">Cancel</button>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    container.innerHTML = '<div class="no-results">Error loading orders</div>';
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                container.innerHTML = '<div class="no-results">Error loading orders</div>';
+            }
+        }
+
+        async function loadWishlist() {
+            const container = document.getElementById('wishlistContent');
+            container.innerHTML = 'Loading wishlist...';
+
+            try {
+                const response = await fetch('/api/wishlist', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (!data.data.items || data.data.items.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">❤️</div>
+                                <h3>Your wishlist is empty</h3>
+                                <p>Save items you love to your wishlist</p>
+                                <a href="/products.html" class="btn btn-primary">Browse Products</a>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `
+                            <div class="products-grid">
+                                ${data.data.items.map(item => `
+                                    <div class="product-card">
+                                        <div class="product-image">
+                                            ${item.product.image_url ? 
+                                                `<img src="${item.product.image_url}" alt="${item.product.name}" style="width: 100%; height: 100%; object-fit: cover;">` :
+                                                `<span>No Image</span>`
+                                            }
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">${item.product.name}</h3>
+                                            <p class="product-price">${formatPrice(item.product.price)}</p>
+                                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                                <button class="btn btn-primary add-to-cart" data-product-id="${item.product.id}" style="flex: 1;">Add to Cart</button>
+                                                <button class="btn btn-outline" onclick="removeFromWishlist('${item.id}')" style="padding: 0.5rem;">❤️</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = '<div class="no-results">Error loading wishlist</div>';
+                }
+            } catch (error) {
+                console.error('Error loading wishlist:', error);
+                container.innerHTML = '<div class="no-results">Error loading wishlist</div>';
+            }
+        }
+
+        async function loadAddresses() {
+            // Placeholder for address management
+            const container = document.getElementById('addressesContent');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📍</div>
+                    <h3>Address Management</h3>
+                    <p>Address management functionality coming soon</p>
+                </div>
+            `;
+        }
+
+        async function loadProfile() {
+            // Placeholder for profile editing
+            const container = document.getElementById('profileContent');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">👤</div>
+                    <h3>Profile Settings</h3>
+                    <p>Profile editing functionality coming soon</p>
+                </div>
+            `;
+        }
+
+        async function loadNotifications() {
+            // Placeholder for notifications
+            const container = document.getElementById('notificationsContent');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔔</div>
+                    <h3>No new notifications</h3>
+                    <p>You're all caught up!</p>
+                </div>
+            `;
+        }
+
+        function viewOrder(orderId) {
+            window.northvia?.showMessage('Order details coming soon', 'info');
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                window.northvia?.showMessage('Order cancellation coming soon', 'info');
+            }
+        }
+
+        function removeFromWishlist(itemId) {
+            if (confirm('Remove this item from your wishlist?')) {
+                window.northvia?.showMessage('Wishlist management coming soon', 'info');
+            }
+        }
+
+        function createSupportTicket() {
+            window.northvia?.showMessage('Support ticket creation coming soon', 'info');
+        }
+
+        function showAddressForm() {
+            window.northvia?.showMessage('Add address functionality coming soon', 'info');
+        }
+
+        function markAllNotificationsRead() {
+            window.northvia?.showMessage('Mark all notifications read coming soon', 'info');
+        }
+    </script>
+</body>
+</html>

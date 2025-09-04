@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - NorthVia</title>
+    <meta name="description" content="Create your NorthVia account and start shopping from thousands of verified vendors across Nigeria.">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .auth-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-header p {
+            color: #666;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: #666;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-social {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            background: white;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-social:hover {
+            background: #f8f9fa;
+            border-color: #007bff;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .auth-footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .strength-meter {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            background: #dc3545;
+            width: 0%;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        
+        .strength-weak { background: #dc3545; width: 33%; }
+        .strength-medium { background: #ffc107; width: 66%; }
+        .strength-strong { background: #28a745; width: 100%; }
+        
+        .terms-agreement {
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .terms-agreement label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .terms-agreement a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .terms-agreement a:hover {
+            text-decoration: underline;
+        }
+        
+        .account-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .account-type {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .account-type:hover {
+            border-color: #007bff;
+        }
+        
+        .account-type.active {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+        
+        .account-type input[type="radio"] {
+            display: none;
+        }
+        
+        .account-type h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .account-type p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .account-type-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Join NorthVia and start your shopping journey</p>
+        </div>
+
+        <form id="registerForm">
+            <!-- Account Type Selection -->
+            <div class="account-type-selector">
+                <div class="account-type active" onclick="selectAccountType('customer')">
+                    <input type="radio" name="account_type" value="customer" id="customer" checked>
+                    <h4>🛍️ Customer</h4>
+                    <p>Shop from thousands of products</p>
+                </div>
+                <div class="account-type" onclick="selectAccountType('vendor')">
+                    <input type="radio" name="account_type" value="vendor" id="vendor">
+                    <h4>🏪 Vendor</h4>
+                    <p>Sell your products online</p>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input 
+                        type="text" 
+                        id="first_name" 
+                        name="first_name" 
+                        class="form-control" 
+                        placeholder="Your first name"
+                        required 
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input 
+                        type="text" 
+                        id="last_name" 
+                        name="last_name" 
+                        class="form-control" 
+                        placeholder="Your last name"
+                        required 
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-control" 
+                    placeholder="Enter your email"
+                    required 
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    class="form-control" 
+                    placeholder="+234 (optional)"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-control" 
+                    placeholder="Create a strong password"
+                    required
+                    oninput="checkPasswordStrength(this.value)"
+                >
+                <div class="password-strength">
+                    <div class="strength-meter">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <div id="strengthText" class="mt-1">Password strength: Weak</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="confirm_password" 
+                    name="confirm_password" 
+                    class="form-control" 
+                    placeholder="Confirm your password"
+                    required 
+                >
+            </div>
+
+            <!-- Vendor-specific fields (hidden by default) -->
+            <div id="vendorFields" style="display: none;">
+                <div class="form-group">
+                    <label for="business_name" class="form-label">Business Name</label>
+                    <input 
+                        type="text" 
+                        id="business_name" 
+                        name="business_name" 
+                        class="form-control" 
+                        placeholder="Your business or store name"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="business_description" class="form-label">Business Description</label>
+                    <textarea 
+                        id="business_description" 
+                        name="business_description" 
+                        class="form-control" 
+                        placeholder="Brief description of your business"
+                        rows="3"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="terms-agreement">
+                <label>
+                    <input type="checkbox" name="terms" required>
+                    <span>I agree to the <a href="/terms.html" target="_blank">Terms of Service</a> and <a href="/privacy.html" target="_blank">Privacy Policy</a></span>
+                </label>
+            </div>
+
+            <div class="terms-agreement">
+                <label>
+                    <input type="checkbox" name="marketing">
+                    <span>I want to receive promotional emails and updates</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </div>
+        </form>
+
+        <div class="divider">
+            <span>or</span>
+        </div>
+
+        <div class="social-login">
+            <a href="#" class="btn-social" onclick="alert('Social registration not implemented yet')">
+                <span>📘</span> Facebook
+            </a>
+            <a href="#" class="btn-social" onclick="alert('Social registration not implemented yet')">
+                <span>🔵</span> Google
+            </a>
+        </div>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/login.html">Sign in here</a></p>
+            <p style="margin-top: 1rem;">
+                <a href="/">← Back to Home</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
+    <script>
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                window.location.href = '/dashboard.html';
+            }
+        });
+
+        function selectAccountType(type) {
+            // Update radio button
+            document.getElementById(type).checked = true;
+            
+            // Update visual selection
+            document.querySelectorAll('.account-type').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#${type}`).closest('.account-type').classList.add('active');
+            
+            // Show/hide vendor fields
+            const vendorFields = document.getElementById('vendorFields');
+            const businessNameField = document.getElementById('business_name');
+            const businessDescField = document.getElementById('business_description');
+            
+            if (type === 'vendor') {
+                vendorFields.style.display = 'block';
+                businessNameField.required = true;
+            } else {
+                vendorFields.style.display = 'none';
+                businessNameField.required = false;
+                businessNameField.value = '';
+                businessDescField.value = '';
+            }
+        }
+
+        function checkPasswordStrength(password) {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let strengthLabel = 'Weak';
+            
+            // Check password criteria
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            // Update strength meter
+            strengthFill.className = 'strength-fill';
+            if (strength >= 4) {
+                strengthFill.classList.add('strength-strong');
+                strengthLabel = 'Strong';
+            } else if (strength >= 2) {
+                strengthFill.classList.add('strength-medium');
+                strengthLabel = 'Medium';
+            } else if (strength >= 1) {
+                strengthFill.classList.add('strength-weak');
+                strengthLabel = 'Weak';
+            }
+            
+            strengthText.textContent = `Password strength: ${strengthLabel}`;
+            
+            // Provide helpful hints
+            let hints = [];
+            if (password.length < 8) hints.push('at least 8 characters');
+            if (!/[a-z]/.test(password)) hints.push('lowercase letter');
+            if (!/[A-Z]/.test(password)) hints.push('uppercase letter');
+            if (!/[0-9]/.test(password)) hints.push('number');
+            if (!/[^A-Za-z0-9]/.test(password)) hints.push('special character');
+            
+            if (hints.length > 0 && password.length > 0) {
+                strengthText.textContent += ` (add: ${hints.join(', ')})`;
+            }
+        }
+
+        // Enhanced form validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                window.northvia?.showMessage('Passwords do not match', 'error');
+                return false;
+            }
+            
+            if (password.length < 8) {
+                e.preventDefault();
+                window.northvia?.showMessage('Password must be at least 8 characters long', 'error');
+                return false;
+            }
+        });
+
+        // Real-time password confirmation check
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#dc3545';
+            } else if (confirmPassword && password === confirmPassword) {
+                this.style.borderColor = '#28a745';
+            } else {
+                this.style.borderColor = '#ddd';
+            }
+        });
+    </script>
+</body>
+</html>
